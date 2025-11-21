@@ -5,5 +5,7 @@
   "scripts": {
     "start": "node deploy.js"
   },
-  "dependencies": {}
+  "dependencies": {
+    "noblox.js": "^6.1.0"
+  }
 }

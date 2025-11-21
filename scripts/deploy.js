@@ -29,14 +29,16 @@ if (!placeId) {
   process.exit(0)
 }
 
-// At this point we have both cookie and placeId. Implementing a full automatic place update requires
-// handling Roblox place file formats (.rbxlx/.rbxm) and using Roblox publish APIs. That code varies
-// depending on whether you want to replace the place, update existing scripts, or insert assets.
-
-log(`All required secrets provided. Ready to deploy to Place ID: ${placeId}`)
-log('Automatic publishing is not enabled in this template. To enable it, extend scripts/deploy.js to:')
-log('- build a .rbxlx/.rbxm package containing the desired Scripts/LocalScripts (the repo already contains script sources)')
-log('- use an authenticated Roblox API client (for example, noblox.js) to upload the place or update scripts in-place')
-log('If you want, I can implement the publish step for you once you confirm the exact replacement strategy (overwrite place vs update scripts).')
-
-process.exit(0)
+// If secrets and place id are present, call the publish helper. publish.js is a scaffold
+// that logs in using noblox.js. It can be extended to perform the actual in-place
+// script updates. For now it provides a safe login check and next-step instructions.
+const publishScript = path.join(__dirname, 'publish.js')
+if (fs.existsSync(publishScript)) {
+  log(`Calling publish helper with place id: ${placeId}`)
+  const { spawnSync } = require('child_process')
+  const result = spawnSync('node', [publishScript, placeId], { stdio: 'inherit', env: process.env })
+  process.exit(result.status)
+} else {
+  log('Publish helper not found; nothing else to do.')
+  process.exit(0)
+}
