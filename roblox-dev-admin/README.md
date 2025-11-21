@@ -1,0 +1,49 @@
+Roblox Developer Admin Example for "99 Nights in the Forest"
+=============================================================
+
+Overview
+--------
+This folder contains a small, safe example Admin toolkit for Roblox Studio intended for use in your own place ("99 Nights in the Forest"). It provides:
+
+- server-side admin actions (teleport, give Tool from ServerStorage, developer leaderstats)
+- server-side NPC kid manager (pathfind or instant-teleport kids to the Base)
+- client-side developer UI + hotkeys for testing
+- a `weapon_names.txt` list you can edit and use as reference (place matching Tools in `ServerStorage`)
+
+Important
+---------
+Use these scripts only in places you own or have explicit permission to modify. Do not use them to interfere with or exploit other people's games. These scripts are intentionally developer-only: the server scripts authorize actions based on the game's creator or a whitelist you can edit.
+
+Files added
+-----------
+- `ServerScripts/AdminActions.lua` — Teleport/give weapon handlers and developer leaderstats.
+- `ServerScripts/KidManager.lua` — Periodic pathfinding for NPC kids and instant teleport event.
+- `ClientScripts/DevControls.lua` — LocalScript with hotkeys and a simple runtime UI for developer actions.
+- `weapon_names.txt` — Example weapon/sack/item names from your project (edit to match Tools in `ServerStorage`).
+
+Quick Install (Roblox Studio)
+-----------------------------
+1. Open your place in Roblox Studio (your own game).
+2. In `ReplicatedStorage`, add three `RemoteEvent`s named exactly: `TeleportRequest`, `GiveWeapon`, `TeleportKidsToBase`.
+3. Place your `Tool` instances (weapons/items/sack) into `ServerStorage` with the names you want. Ensure names match `weapon_names.txt` if using it.
+4. In `Workspace` add a `Model` or `Part` named `Base` with `PrimaryPart` set (this is where kids will be escorted).
+5. Add a `Folder` in `Workspace` named `Kids` and put your NPC models inside; each NPC must have a `Humanoid` and `HumanoidRootPart`.
+6. Copy `AdminActions.lua` and `KidManager.lua` into `ServerScriptService`.
+7. Copy `DevControls.lua` into `StarterPlayer > StarterPlayerScripts`.
+8. Play in Studio (Play Solo). As the place owner (game creator) you'll be authorized to use the admin controls.
+
+Controls
+--------
+- Hotkeys (developer only):
+  - `T` — Teleport to mouse position.
+  - `K` — Give the default weapon (first in `weapon_names.txt`, or pass a name).
+  - `Y` — Teleport all kids to the Base instantly.
+- UI: press the small developer button to open controls with buttons for teleport, give weapon, and teleport kids.
+
+Customization
+-------------
+- Edit the `isAdmin` function in `AdminActions.lua` to add other developer UserIds to the whitelist.
+- Replace or extend the UI in `DevControls.lua` if you prefer a different layout.
+- Add Tools to `ServerStorage` named exactly as listed in `weapon_names.txt`.
+
+If you'd like, I can also convert the UI into a fully featured admin panel, add safety checks to avoid teleporting into walls, or add persistent settings.

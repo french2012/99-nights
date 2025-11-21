@@ -1,0 +1,15 @@
+-- Edit this file to list the Tool names you use in your place.
+-- Place Tools with matching names into `ServerStorage` in Roblox Studio.
+
+Sword
+Blaster
+Sack
+Torch
+Bow
+Arrow
+Axe
+Shield
+HealthPotion
+StaminaPotion
+
+-- Add any other item/weapon names used in your project below, one per line.
