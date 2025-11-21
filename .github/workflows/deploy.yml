@@ -1,0 +1,43 @@
+name: "Deploy Roblox Admin Scripts"
+
+on:
+  workflow_dispatch:
+    inputs:
+      place_id:
+        description: '(Optional) Roblox Place ID to deploy to'
+        required: false
+        default: ''
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create package archive
+        run: |
+          zip -r admin-scripts.zip roblox-dev-admin || true
+
+      - name: Upload admin scripts artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-scripts
+          path: admin-scripts.zip
+
+      - name: Run deploy script (informational)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install node deps
+        run: |
+          cd scripts || exit 0
+          if [ -f package.json ]; then npm ci; fi
+
+      - name: Execute deploy helper
+        env:
+          ROBLOX_SECURITY: ${{ secrets.ROBLOX_SECURITY }}
+          ROBLOX_PLACE_ID: ${{ secrets.ROBLOX_PLACE_ID }}
+        run: |
+          node scripts/deploy.js "${{ github.event.inputs.place_id }}"

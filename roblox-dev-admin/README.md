@@ -47,3 +47,32 @@ Customization
 - Add Tools to `ServerStorage` named exactly as listed in `weapon_names.txt`.
 
 If you'd like, I can also convert the UI into a fully featured admin panel, add safety checks to avoid teleporting into walls, or add persistent settings.
+
+CI Deploy (template)
+--------------------
+I added a GitHub Actions template `/.github/workflows/deploy.yml` and a helper script `scripts/deploy.js`.
+When you trigger the workflow it will:
+
+- package the `roblox-dev-admin` folder into an artifact `admin-scripts.zip` (downloadable from the Actions run), and
+- run `scripts/deploy.js` which will check for the presence of the secrets and place id.
+
+To enable fully automated publish from GitHub (no Studio):
+
+1. Add your Roblox `.ROBLOSECURITY` cookie as a GitHub repository secret named `ROBLOX_SECURITY`.
+  - In GitHub: Settings → Secrets → Actions → New repository secret
+  - Name: `ROBLOX_SECURITY`
+  - Value: your .ROBLOSECURITY cookie string
+
+2. (Optional) Add the place id as a secret named `ROBLOX_PLACE_ID`, or specify it when you trigger the workflow.
+
+3. Trigger the workflow from the Actions tab → "Deploy Roblox Admin Scripts" → Run workflow → provide `place_id` input if you didn't set the secret.
+
+Notes & next steps
+-------------------
+- The current template packages scripts and validates secrets/place id. It does NOT automatically publish into your Roblox place yet — publishing requires creating a `.rbxlx`/.`rbxm` package and calling Roblox APIs to upload it. The helper prints clear next steps and can be extended to perform the publish using `noblox.js`.
+- If you want, I can implement the final publish step (overwrite place vs update scripts in-place). If you confirm which approach you want I will implement it in `scripts/deploy.js` and add the required npm dependency (for example, `noblox.js`) so the workflow will publish directly to your place when run.
+
+Security reminder
+-----------------
+- Never paste your `.ROBLOSECURITY` cookie into chat. Add it only as a GitHub Actions secret.
+- The admin scripts already check `game.CreatorId` and a whitelist, so only you (or whitelisted UserIds) will be able to use the dev tools in-game.
