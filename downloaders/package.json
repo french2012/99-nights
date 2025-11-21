@@ -1,0 +1,8 @@
+{
+  "name": "99-nights-downloader",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "unzipper": "^0.10.11"
+  }
+}
