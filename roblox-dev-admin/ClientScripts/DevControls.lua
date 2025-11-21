@@ -142,6 +142,69 @@ toggleButton.MouseButton1Click:Connect(function()
     panel.Visible = not panel.Visible
 end)
 
+-- Make the panel draggable
+local UserInputService = game:GetService("UserInputService")
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function clampToViewport(pos, size)
+    local viewport = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1280,720)
+    local x = math.clamp(pos.X, 0, viewport.X - size.X)
+    local y = math.clamp(pos.Y, 0, viewport.Y - size.Y)
+    return Vector2.new(x, y)
+end
+
+local function updateDrag(input)
+    if not dragging or not dragInput then return end
+    local delta = input.Position - dragStart
+    local newPos = startPos + delta
+    local size = Vector2.new(panel.AbsoluteSize.X, panel.AbsoluteSize.Y)
+    local clamped = clampToViewport(newPos, size)
+    panel.Position = UDim2.new(0, clamped.X, 0, clamped.Y)
+end
+
+panel.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Vector2.new(panel.AbsolutePosition.X, panel.AbsolutePosition.Y)
+        dragInput = input
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+panel.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(updateDrag)
+
+-- Add small icons (text-based) to buttons for quick recognition
+local function addIconTo(button, iconText)
+    local icon = Instance.new("TextLabel")
+    icon.Size = UDim2.new(0, 28, 0, 28)
+    icon.Position = UDim2.new(0, 8, 0, (button.Position.Y.Offset - 8))
+    icon.BackgroundTransparency = 1
+    icon.Text = iconText
+    icon.Font = Enum.Font.SourceSansBold
+    icon.TextSize = 18
+    icon.TextColor3 = Color3.fromRGB(240,240,240)
+    icon.Parent = panel
+    return icon
+end
+
+-- Place icons next to each control (use simple emoji/text icons)
+addIconTo(giveBtn, "🗡")
+addIconTo(tpBtn, "📍")
+addIconTo(kidsBtn, "👶")
+
+
 -- Confirmation modal for teleport
 local confirmModal = Instance.new("Frame")
 confirmModal.Name = "ConfirmModal"
